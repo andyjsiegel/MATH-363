@@ -1,0 +1,108 @@
+---
+format: pdf
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
+```
+
+# Homework 03 - Regression and Correlation.
+
+Observations made by the astronomer Edwin Hubble showed that the universe is expanding. If $v$ is the galaxy's recession from the Milky Way and $d$ is the distance to that galaxy, Hubble's law is the linear relationship.
+
+$$v=H_0d.$$
+
+$H_0$ is known as  \textbf{Hubble's constant}. To estimate $H$, we use the data below, Distance in measured in millions of light years. Velocity is measured in thousands of miles per second.
+
+\begin{center}
+\begin{tabular}{lrr}
+Cluster & Distance & Velocity\\ \hline
+Virgo & 22 & 0.8 \\
+Pegasus & 68 & 2.4\\
+Perseus & 108 & 3.2 \\
+Coma Berenices & 137 & 4.7\\
+Ursa Major \#1 & 255 & 9.3 \\
+Leo & 315 & 12.0\\
+Corona Borealis & 390 & 13.4\\
+Gemini & 405 & 14.4 \\
+Bootes & 685 & 24.5 \\
+Ursa Major \#2 & 700 & 26.0\\
+Hydra & 1100 & 38.0 \\ \hline
+\end{tabular}
+\end{center}
+
+## Problem 1
+
+
+```{r data_setup}
+dist <- c(22, 68, 108, 137, 255, 315, 390, 405, 685, 700, 1100)
+
+velo <- c(0.8, 2.4, 3.2, 4.7, 9.3, 12.0, 13.4, 14.4, 24.5, 26.0, 38.0)
+```
+
+### Part a)
+
+Provide a scatterplot of the data using $d$ as the explanatory variable
+
+```{r scatterplot}
+plot(dist, velo, main = "Galaxy Distance vs. Recession Velocity",
+     xlab = "Distance (millions of light years)",
+     ylab = "Velocity (thousands of miles per second)",
+     col = "blue", pch = 19)
+```
+
+### Part b)
+
+Determine corresponding the regression line, and report your estimate of Hubble's constant. (Note that the $y$-intercept is 0.)
+
+```{r reg_lin}
+lin_reg <- lm(velo ~ dist - 1)
+
+summary(lin_reg)
+```
+
+The estimated Hubble's constant is approximately `r round(lin_reg$coefficients[1], 4)` thousands of miles per second per million light years.
+
+### Part c)
+
+Give the sum of the residuals. Note that it is not equal to zero. What would lead this to be the case?
+
+```{r residuals}
+reg_resid <- resid(lin_reg)
+
+sum(reg_resid)
+```
+
+The sum of the residuals is not zero because the regression line is forced through the origin (no intercept term). In a standard regression with an intercept, the residuals always sum to zero by construction. When we remove the intercept, this property no longer holds.
+
+### Part d)
+
+Determine the equation for the regression line using $v$ as the explanatory variable.
+
+```{r reg_line2}
+lin_reg2 <- lm(dist ~ velo - 1)
+
+summary(lin_reg2)
+```
+
+The regression line using $v$ as the explanatory variable is $d = `r round(lin_reg2$coefficients[1], 4)` \cdot v$.
+
+### Part e)
+
+Find the product of the slopes of the two regression lines.
+
+```{r slope_product}
+slope1 <- lin_reg$coefficients[1]
+slope2 <- lin_reg2$coefficients[1]
+
+slope1 * slope2
+```
+
+The product of the two slopes is `r round(slope1 * slope2, 4)`.
+
+### Part f)
+
+How close are they are being the same line?  Explain your answer.
+
+If the two regression lines were identical, the product of their slopes would equal exactly 1 (since one slope would be the reciprocal of the other). The product we computed is very close to 1, which indicates the two lines are nearly the same. This makes sense because the data points lie very close to a straight line through the origin, meaning the correlation between distance and velocity is very strong. The closer the correlation is to $\pm 1$, the closer the product of the slopes is to 1, and the more the two regression lines coincide.
